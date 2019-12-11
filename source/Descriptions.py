@@ -107,7 +107,9 @@ def get_phase_step_descriptions(routine):
     steps_df.to_excel(path,sheet_name=phase_name)
 
 
-fname = r"C:\Users\Yaseen.Ali\OneDrive - Callisto Integration\Documents\Python Scripts and Training\My Projects\Archestra_Desc_Generator\data\SOFTCENTERS_Pack_Dev_20191209.L5K"
+##Setup
+
+fname = r"C:\Users\Yaseen.Ali\OneDrive - Callisto Integration\Documents\Python Scripts and Training\Archestra_Desc_Generator\data\SOFTCENTERS_Pack_Dev_20191209.L5K"
 
 plc = L5k.L5kObject(fname)
 
@@ -121,8 +123,6 @@ for item in routines:
         get_phase_step_descriptions(routine)
 
 
-def generate_Galaxy_load(path_of_Galaxy_load_template):
 
-    df = pd.read_csv(path_of_Galaxy_load_template)
 
 
