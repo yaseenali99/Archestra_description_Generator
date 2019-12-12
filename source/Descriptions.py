@@ -11,6 +11,10 @@ class routine():
         self.routine_string = routine_string
 
     def get_start_of_seq(self):
+        '''
+        Helper function to find start of Sequence Logic
+        :return:
+        '''
         string_replaced = self.clean_routine_string()
         #print("Number of lines in routine: ",len(string_replaced))
         seq_str = r"Sequence Step Transition Logic"
@@ -20,9 +24,6 @@ class routine():
             m = re.search(seq_str,string)
             #print(i, string)
             if m is not None:
-                # print("Start of Sequence is on Line: ",i)
-                # print("Match group: ",m.group(0))
-                # print(string)
                 strt = i
                 break
 
@@ -32,6 +33,11 @@ class routine():
             return 0
 
     def clean_routine_string(self):
+        '''
+        This routine cleans up the carriage return,tabs and new lines and resplits the string on
+        semi colon since this demarks a rung end.
+        :return: List of rungs' text
+        '''
         string_replaced = self.routine_string.replace("\t",'').replace("\n",'').replace("\r",'')
         string_replaced = string_replaced.split(';')
         return string_replaced
@@ -58,26 +64,37 @@ class routine():
             print("No match found")
 
 
-    def build_step_dict(self):
+    def build_step_dict(self,debug=0):
+        '''
+         This method builds a dictionary of step descriptions for the routine.
+         It looks for rungs starting with "RC:" which denote Rung Comments and then associates these
+         with the active step number found in the next rung.
+         :param debug: set this to 1 to print debug messages
+         :return: Returns a dictionary where the key is the step description number and the value is the step description
+        '''
 
         #Shorten Routine Rung List to only Sequence Rungs
         routine_lines_seq = self.clean_routine_string()[self.get_start_of_seq():]
 
+        #Regular Expression to get Active Step number
         step_match_str = r'StepActive\[(\d+)\]'
         step_match = re.compile(step_match_str)
 
-        desc_match_str = r'\"([a-zA-Z \$]*)\"'
+        #Regular Expression to pull out description
+        desc_match_str = r'\"([a-zA-Z0-9-,. \$]*)\"'
         desc_match = re.compile(desc_match_str.strip())
 
         step_dict = {}
         for i,line in enumerate(routine_lines_seq):
             if line.startswith("RC:"):
                 #line = line.split("\"")
-                #print("\nLine:" ,line)
+                if debug:
+                    print("\nLine:" ,line)
                 m = desc_match.search(line)
 
                 if m is not None:
-                   # print("Groups : ", m.groups())
+                    if debug:
+                        print("Groups : ", m.groups())
                     if m.group(1)[-2] is '$':
                         step_comment = m.group(1)[:-2]
                     else:
@@ -88,12 +105,18 @@ class routine():
                 #print(step)
                 if m is not None:
                     step_num = m.group(1)
-                    #print("Step # {} , Step Comment: {} ".format(step_num,step_comment))
+                    if debug:
+                        print("Step # {} , Step Comment: {} ".format(step_num,step_comment))
                     step_dict[step_num] = step_comment
 
         return step_dict
 
-    def get_phase_step_descriptions(self):
+    def phase_step_descriptions_to_excel(self,path):
+        '''
+        Writes the step descriptions to an excel file.
+        :param path: Path where the file should be saved. The file will be named the phase name
+        :return:
+        '''
         #For Each Routine:
         phase_name = self.get_phase_name()
         print("Phase Name: ", phase_name)
@@ -101,31 +124,15 @@ class routine():
 
         #Build the step dictionary
         step_dict = self.build_step_dict()
-        print(step_dict.keys())
+        #print(step_dict.keys())
 
         #convert Dict to Dataframe and Write to File
         steps_df = pd.DataFrame.from_dict(step_dict,orient='index')
-        path = '..\data\\'+phase_name +'.xlsx'
+        #path = '..\data\\'+phase_name +'.xlsx'
         print("Writing to: ",path)
         steps_df.to_excel(path,sheet_name=phase_name)
 
 
-##Setup
-
-# fname = r"C:\Users\Yaseen.Ali\OneDrive - Callisto Integration\Documents\Python Scripts and Training\Archestra_Desc_Generator\data\SOFTCENTERS_Pack_Dev_20191209.L5K"
-#
-# plc = L5k.L5kObject(fname)
-#
-# #Read in Excel File
-# data = pd.read_excel("..\data\Input_phase_list.xlsx",sheet_name="Sheet1")
-# programs = data["Program"].unique()
-# routines = data["Routine"].unique()
-#
-# for item in routines:
-#         routine = plc['CONTROLLER']['PROGRAM '+ programs[0]]['ROUTINE ' + item]['text']
-#         ds = routine(item)
-#         step_dict = ds.build_step_dict()
-#         step_dict.keys()
 
 
 
