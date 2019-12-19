@@ -85,7 +85,7 @@ class routine():
         step_match = re.compile(step_match_str)
 
         #Regular Expression to pull out description
-        desc_match_str = r'\"([a-zA-Z0-9-,. \$]*)\"'
+        desc_match_str = r'\"([a-zA-Z0-9-,. ]*)\"'
         desc_match = re.compile(desc_match_str.strip())
 
         step_dict = {}

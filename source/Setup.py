@@ -3,12 +3,17 @@ import L5k.L5k as L5k
 import pandas as pd
 import csv
 
-fname = r"C:\Users\Yaseen.Ali\OneDrive - Callisto Integration\Documents\Python Scripts and Training\Archestra_Desc_Generator\data\SOFTCENTERS_Pack_Dev_20191210.L5K"
+#TODO: Create commandline interface to run this as a script
+
+fname = r"C:\Users\Yaseen.Ali\OneDrive - Callisto Integration\Documents\Python Scripts and Training\Archestra_Desc_Generator\data\SOFTCENTERS_Pack_Dev_20191219.L5K"
 
 plc = L5k.L5kObject(fname)
 
 input_phase_list_path = "..\data\Input_phase_list.xlsx"
 galaxy_load_template_path = "..\data\\test_phase.csv"
+
+
+
 
 def galaxy_load_builder(input_phase_list_path,galaxy_load_template_path):
 
@@ -48,11 +53,9 @@ def galaxy_load_builder(input_phase_list_path,galaxy_load_template_path):
 
 galaxy_load_file = galaxy_load_builder(input_phase_list_path,galaxy_load_template_path)
 
-galaxy_load_file.to_csv("..\data\\test_phase_mod.csv",index=None)#,quoting=csv.QUOTE_NONE,quotechar='',  escapechar="\\")
-        #print(stp.get_phase_name(), step_dict.items())
-print(galaxy_load_file)
+galaxy_load_file.to_csv("..\data\\test_phase_mod.csv",index=None)
 
-print("")
+print(galaxy_load_file)
 
 
 
