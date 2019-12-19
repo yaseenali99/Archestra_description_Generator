@@ -9,6 +9,7 @@ import pandas as pd
 class routine():
     def __init__(self,routine_string):
         self.routine_string = routine_string
+        self.name = self.get_phase_name()
 
     def get_start_of_seq(self):
         '''
@@ -43,7 +44,10 @@ class routine():
         return string_replaced
 
     def get_phase_name(self):
+        '''
 
+        :return: The Phase Tag name
+        '''
         string_replaced = self.clean_routine_string()
         #print("Number of lines in routine: ",len(string_replaced))
         seq_str = r"GM_FM_PhaseSeq"
@@ -81,7 +85,7 @@ class routine():
         step_match = re.compile(step_match_str)
 
         #Regular Expression to pull out description
-        desc_match_str = r'\"([a-zA-Z0-9-,. \$]*)\"'
+        desc_match_str = r'\"([a-zA-Z0-9-,. ]*)\"'
         desc_match = re.compile(desc_match_str.strip())
 
         step_dict = {}
@@ -131,8 +135,6 @@ class routine():
         #path = '..\data\\'+phase_name +'.xlsx'
         print("Writing to: ",path)
         steps_df.to_excel(path,sheet_name=phase_name)
-
-
 
 
 
